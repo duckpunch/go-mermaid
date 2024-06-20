@@ -74,3 +74,12 @@ MV[WW];C[comment];X[XX];R[YY]
 )
 
  */
+
+/**
+ * top level: type, init-black, init-white, size
+ */
+
+class StaticBoard {
+  constructor() {
+  }
+}
