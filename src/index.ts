@@ -1,7 +1,8 @@
-import godash from "godash";
+import godash, {Board} from "godash";
 
 console.log("sup");
 console.log(godash);
+console.log(godash.Board);
 
 
 /*
@@ -79,7 +80,23 @@ MV[WW];C[comment];X[XX];R[YY]
  * top level: type, init-black, init-white, size
  */
 
-//class StaticBoard {
-  //constructor() {
-  //}
-//}
+function processStaticBoard(
+  type: string,
+  size: number,
+  initBlack: Array<string>,
+  initWhite: Array<string>,
+) {
+  return new Board(size);
+}
+
+function renderBoard(element, board) {
+  // blank the element, add board
+}
+
+
+const sb = document.getElementById("sandbox");
+//window.sb = sb;
+//
+//
+// how long do redraws take?  worth it to just replace moves themselves?
+// any way to clear only moves?  perhaps stacked SVGs?
