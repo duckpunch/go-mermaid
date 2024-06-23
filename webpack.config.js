@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   mode: 'production',
-  entry: './src/index.ts',
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'go-mermaid.js',
@@ -12,14 +12,25 @@ module.exports = {
   },
   module: {
     rules: [
+      //{
+        //test: /\.ts$/,
+        //exclude: /node_modules/,
+        //use: 'ts-loader',
+      //}
+
       {
-        test: /\.ts$/,
+        test: /\.js$/,
         exclude: /node_modules/,
-        use: 'ts-loader',
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
       }
     ]
   },
-  resolve: {
-    extensions: ['.ts']
-  }
+  //resolve: {
+    //extensions: ['.ts']
+  //}
 };
