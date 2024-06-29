@@ -1,35 +1,81 @@
 import godash from 'godash';
 
 function process(raw) {
-  raw = raw.trim()
-  const type = raw.split('\n', 1)[0].trim();
-  const rest = raw.replace(type, '').trim();
+  const lines = raw.trim().split('\n').filter(line => line !== '');
+  const type = lines.shift().trim();
+
   switch (type) {
     case 'static':
-      return processStatic(rest);
+      return processStatic(lines);
     case 'freeplay':
-      return processFreeplay(rest);
+      return processFreeplay(lines);
     case 'replay':
-      return processReplay(rest);
+      return processReplay(lines);
     case 'auto-response':
-      return processAutoResponse(rest);
+      return processAutoResponse(lines);
+    default:
+      throw new TypeError('Unrecognized board type');
   }
 }
 
-function processStatic(raw) {
-  console.log(raw);
+function listOfCoordinates(raw) {
+  return raw.trim()
+    .split(',')
+    .map(token => token.trim())
+    .map(godash.fromA1Coordinate);
 }
 
-function processFreeplay(raw) {
-  console.log(raw);
+const keyMap = {
+  'size': parseInt,
+  'init-black': listOfCoordinates,
+  'init-white': listOfCoordinates,
+};
+
+function processLine(line) {
+  const parts = line.split(':');
+  return [parts[0], keyMap[parts[0]](parts[1])];
 }
 
-function processReplay(raw) {
-  console.log(raw);
+function buildConfig(lines) {
+  return Object.fromEntries(lines.map(processLine));
 }
 
-function processAutoResponse(raw) {
-  console.log(raw);
+function processStatic(lines) {
+  const defaultStatic = {
+    'size': 19,
+    'init-black': [],
+    'init-white': [],
+  };
+  return Object.assign(defaultStatic, buildConfig(lines));
+}
+
+function processFreeplay(lines) {
+  const defaultFreeplay = {
+    'size': 19,
+    'init-black': [],
+    'init-white': [],
+  };
+  return Object.assign(defaultFreeplay, buildConfig(lines));
+}
+
+const startToken = '(';
+
+function processReplay(lines) {
+  while (lines.length > 0 && lines[0].trim()[0] != startToken) {
+  }
+}
+
+function processAutoResponse(lines) {
+  console.log(lines);
+}
+
+function processNested() {
+  // want: [
+  //   {
+  //     contents: [str] // lines, not in parens
+  //     children: [ {} ]
+  //   }
+  // ]
 }
 
 process(`
@@ -39,8 +85,6 @@ size: 19
 init-black: A1, A2, A3
 init-white: B1, B2, B3
 `)
-
-// {size: 19, init-black: [a1, a2, ...], init-white: [b1, ...]}
 
 process(`
 freeplay
@@ -57,16 +101,16 @@ size: 19
 init-black: A1, A2, A3
 init-white: B1, B2, B3
 
-[
-  (
-    move: C1
-    comment: Whoa
-  )
-  (
-    move: C2
-    comment: Whoa
-  )
-]
+(
+  move: C1
+  comment: Whoa
+)
+(
+  move: C2
+  comment: Whoa
+)
+(move: C3)
+(C4)(C5)(C6)
 `)
 
 process(`
@@ -79,16 +123,18 @@ init-white: B1, B2, B3
 (
   move: C1
   comment: Something interesting
-  auto: C2
-  response: [
-    (
-      move: C3
-      comment: Something else
-      auto: C4
-      response: []
-    )
-  ]
+  response: C2
+  ---
+  (
+    move: C3
+    comment: Something else
+    response: C4
+    ---
+    (...)
+  )
 )
 `)
 
 window.process = process;
+
+// initial config, tree config
