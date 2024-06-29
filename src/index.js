@@ -1,21 +1,8 @@
 import godash from 'godash';
+import yaml from 'js-yaml'
 
 function process(raw) {
-  const lines = raw.trim().split('\n').filter(line => line !== '');
-  const type = lines.shift().trim();
-
-  switch (type) {
-    case 'static':
-      return processStatic(lines);
-    case 'freeplay':
-      return processFreeplay(lines);
-    case 'replay':
-      return processReplay(lines);
-    case 'auto-response':
-      return processAutoResponse(lines);
-    default:
-      throw new TypeError('Unrecognized board type');
-  }
+  console.log(yaml.load(raw));
 }
 
 function listOfCoordinates(raw) {
@@ -79,60 +66,43 @@ function processNested() {
 }
 
 process(`
-static
-
+type: static
 size: 19
-init-black: A1, A2, A3
-init-white: B1, B2, B3
+init-black: [A1, A2, A3]
+init-white: [B1, B2, B3]
 `)
 
 process(`
-freeplay
-
+type: freeplay
 size: 19
-init-black: A1, A2, A3
-init-white: B1, B2, B3
+init-black: [A1, A2, A3]
+init-white: [B1, B2, B3]
 `)
 
 process(`
-replay
-
+type: replay
 size: 19
-init-black: A1, A2, A3
-init-white: B1, B2, B3
-
-(
-  move: C1
-  comment: Whoa
-)
-(
-  move: C2
-  comment: Whoa
-)
-(move: C3)
-(C4)(C5)(C6)
+init-black: [A1, A2, A3]
+init-white: [B1, B2, B3]
+sequence:
+  - move: c1
+    comment: whoa
+  - c2
+  - c3
 `)
 
 process(`
-auto-response
-
+type: auto-response
 size: 19
-init-black: A1, A2, A3
-init-white: B1, B2, B3
-
-(
-  move: C1
-  comment: Something interesting
-  response: C2
-  ---
-  (
-    move: C3
-    comment: Something else
-    response: C4
-    ---
-    (...)
-  )
-)
+init-black: [A1, A2, A3]
+init-white: [B1, B2, B3]
+response:
+  - move: c1
+    comment: Something interesting
+    auto: c2
+    response:
+      - move: c3
+        comment: Yep
 `)
 
 window.process = process;
