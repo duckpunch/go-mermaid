@@ -14,7 +14,7 @@
   "dependencies": {
     "godash": "^2.3.0",
     "js-yaml": "^4.1.0",
-    "schema-typed": "^2.2.2"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",

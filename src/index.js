@@ -1,8 +1,29 @@
 import godash from 'godash';
 import yaml from 'js-yaml'
+//import { object, string, number, date, InferType } from 'yup';
+import { object, number } from 'yup';
+
+//import Joi from 'joi';
+
+//import { SchemaModel, StringType, DateType, NumberType, ObjectType, ArrayType } from 'schema-typed';
+
+//const staticModel = SchemaModel({
+  //size: NumberType().isInteger().range(2, 19),
+//});
+
+//const staticSchema = Joi.object({
+  //size: Joi.number().integer().min(2).max(19),
+//});
+
+const staticSchema = object({
+  size: number().integer(),
+});
 
 function process(raw) {
   console.log(yaml.load(raw));
+  //console.log(staticSchema.validate(yaml.load(raw)));
+  //console.log(staticModel.check(yaml.load(raw)));
+  console.log(staticSchema.cast(yaml.load(raw)));
 }
 
 function listOfCoordinates(raw) {
@@ -106,5 +127,6 @@ response:
 `)
 
 window.process = process;
+//document.getElementById('sandbox').innerHTML = 'yo';
 
 // initial config, tree config
