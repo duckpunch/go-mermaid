@@ -2,6 +2,11 @@ import godash from 'godash';
 import yaml from 'js-yaml'
 import { array, lazy, mixed, number, object, string } from 'yup';
 
+import { renderBoard } from './render';
+
+const svg = document.getElementById('container');
+renderBoard(svg);
+
 const AUTO_RESPONSE = 'auto-response';
 const FREEPLAY = 'freeplay';
 const REPLAY = 'replay';
@@ -89,6 +94,7 @@ responses:
 `)
 
 window.process = process;
+window.s = svg;
 //document.getElementById('sandbox').innerHTML = 'yo';
 
 // initial config, tree config
