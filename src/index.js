@@ -1,91 +1,68 @@
 import godash from 'godash';
 import yaml from 'js-yaml'
-import { object, number } from 'yup';
+import { array, lazy, mixed, number, object, string } from 'yup';
 
-const staticSchema = object({
-  size: number().integer(),
+const AUTO_RESPONSE = 'auto-response';
+const FREEPLAY = 'freeplay';
+const REPLAY = 'replay';
+const STATIC = 'static';
+
+const coordinateList = array(mixed().transform(godash.fromA1Coordinate));
+const replayMove = lazy(value => {
+  switch (typeof value) {
+    case 'string':
+      return mixed()
+        .transform(godash.fromA1Coordinate)
+        .transform(coordinate => ({comment: '', move: coordinate}));
+    default:
+      return object({
+        comment: string(),
+        move: mixed().transform(godash.fromA1Coordinate),
+      });
+  }
 });
+//const autoResponseTree = 
 
-function process(raw) {
-  console.log(yaml.load(raw));
-  console.log(staticSchema.cast(yaml.load(raw)));
-}
-
-function listOfCoordinates(raw) {
-  return raw.trim()
-    .split(',')
-    .map(token => token.trim())
-    .map(godash.fromA1Coordinate);
-}
-
-const keyMap = {
-  'size': parseInt,
-  'init-black': listOfCoordinates,
-  'init-white': listOfCoordinates,
+const commonSchema = object({
+  type: string()
+    .required()
+    .lowercase()
+    .trim()
+    .oneOf([AUTO_RESPONSE, FREEPLAY, REPLAY, STATIC]),
+  size: number().default(19).integer(),
+  'init-black': coordinateList,
+  'init-white': coordinateList,
+});
+const schemas = {
+  [AUTO_RESPONSE]: commonSchema,
+  [FREEPLAY]: commonSchema,
+  [REPLAY]: commonSchema.concat(object({
+    sequence: array(replayMove),
+  })),
+  [STATIC]: commonSchema,
 };
 
-function processLine(line) {
-  const parts = line.split(':');
-  return [parts[0], keyMap[parts[0]](parts[1])];
+async function process(raw) {
+  const loaded = yaml.load(raw);
+  const common = await commonSchema.validate(loaded);
+  console.log(await schemas[common.type].validate(loaded));
 }
 
-function buildConfig(lines) {
-  return Object.fromEntries(lines.map(processLine));
-}
-
-function processStatic(lines) {
-  const defaultStatic = {
-    'size': 19,
-    'init-black': [],
-    'init-white': [],
-  };
-  return Object.assign(defaultStatic, buildConfig(lines));
-}
-
-function processFreeplay(lines) {
-  const defaultFreeplay = {
-    'size': 19,
-    'init-black': [],
-    'init-white': [],
-  };
-  return Object.assign(defaultFreeplay, buildConfig(lines));
-}
-
-const startToken = '(';
-
-function processReplay(lines) {
-  while (lines.length > 0 && lines[0].trim()[0] != startToken) {
-  }
-}
-
-function processAutoResponse(lines) {
-  console.log(lines);
-}
-
-function processNested() {
-  // want: [
-  //   {
-  //     contents: [str] // lines, not in parens
-  //     children: [ {} ]
-  //   }
-  // ]
-}
-
-process(`
+await process(`
 type: static
 size: 19
 init-black: [A1, A2, A3]
 init-white: [B1, B2, B3]
 `)
 
-process(`
+await process(`
 type: freeplay
 size: 19
 init-black: [A1, A2, A3]
 init-white: [B1, B2, B3]
 `)
 
-process(`
+await process(`
 type: replay
 size: 19
 init-black: [A1, A2, A3]
@@ -97,17 +74,17 @@ sequence:
   - c3
 `)
 
-process(`
+await process(`
 type: auto-response
 size: 19
 init-black: [A1, A2, A3]
 init-white: [B1, B2, B3]
-response:
-  - move: c1
+responses:
+  c1:
     comment: Something interesting
     auto: c2
-    response:
-      - move: c3
+    responses:
+      c3:
         comment: Yep
 `)
 
