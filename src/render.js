@@ -1,7 +1,8 @@
-export function render(size) {
+export function create(size) {
   const root = svg('svg', {
     viewBox: `0 0 ${size + 1} ${size + 1}`,
   });
+
   const board = svg('svg');
   root.appendChild(board);
   for (let i = 1; i < size; i++) {
@@ -22,12 +23,14 @@ export function render(size) {
       'stroke-width': '0.3%',
     }));
   }
-  return {
-    root,
-    board,
-    //moves
-    //annotations
-  };
+
+  const stones = svg('svg');
+  root.appendChild(stones);
+
+  const annotations = svg('svg');
+  root.appendChild(annotations);
+
+  return { root, board, stones, annotations };
 }
 
 export function svg(name, attributes) {
@@ -36,4 +39,8 @@ export function svg(name, attributes) {
     element.setAttribute(key, attributes[key]);
   }
   return element;
+}
+
+export function renderBoard(stoneContainer, board) {
+  console.log(board);
 }

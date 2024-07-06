@@ -2,7 +2,7 @@ import godash from 'godash';
 import yaml from 'js-yaml'
 import { array, lazy, mixed, number, object, string } from 'yup';
 
-import { render } from './render';
+import { create, renderBoard } from './render';
 
 //const svg = document.getElementById('container');
 //renderBoard(svg);
@@ -94,9 +94,23 @@ responses:
 `)
 
 window.process = process;
-window.render = render;
+window.create = create;
 window.s = document.getElementById('sandbox');
-//window.vector = vector;
-//document.getElementById('sandbox').innerHTML = 'yo';
-
-// initial config, tree config
+window.board = function() {
+  return godash.placeStones(
+    godash.Board(),
+    [godash.Coordinate(4,4), godash.Coordinate(16, 4)],
+    godash.BLACK,
+  );
+};
+window.render = function() {
+  const {stones} = create(19);
+  renderBoard(
+    stones,
+    godash.placeStones(
+      godash.Board(),
+      [godash.Coordinate(4,4), godash.Coordinate(16, 4)],
+      godash.BLACK,
+    ),
+  );
+};
