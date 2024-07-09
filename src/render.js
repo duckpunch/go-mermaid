@@ -5,10 +5,10 @@ export function create(size) {
 
   const board = svg('svg');
   root.appendChild(board);
-  for (let i = 1; i < size; i++) {
+  for (let i = 1; i <= size; i++) {
     board.appendChild(svg('line', {
       x1: 1,
-      x2: size - 1,
+      x2: size,
       y1: i,
       y2: i,
       stroke: 'black',
@@ -18,7 +18,7 @@ export function create(size) {
       x1: i,
       x2: i,
       y1: 1,
-      y2: size - 1,
+      y2: size,
       stroke: 'black',
       'stroke-width': '0.3%',
     }));
@@ -42,5 +42,13 @@ export function svg(name, attributes) {
 }
 
 export function renderBoard(stoneContainer, board) {
-  console.log(board);
+  board.moves.forEach((color, coordinate) => {
+    console.log(coordinate.x, coordinate.y);
+    stoneContainer.appendChild(svg('circle', {
+      cx: coordinate.x + 1,
+      cy: coordinate.y + 1,
+      r: '0.45',
+      fill: color,
+    }));
+  });
 }
