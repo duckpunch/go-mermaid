@@ -1,20 +1,34 @@
-import { isNumber } from 'lodash';
+import godash from 'godash';
+import { isArray, isNumber } from 'lodash';
 
 const DEFAULT_SIZE = 19;
 
-// use lodash instead of yup
-// need integer check, string check
+function listOfCoordinates(raw) {
+  if (isArray(raw)) {
+    return raw.map(godash.fromA1Coordinate);
+  } else {
+    throw new TypeError('expected list of coordinates');
+  }
+}
 
 class Base {
   constructor(raw) {
+    // TODO possibly funky parseInt results
     const size = parseInt(raw.size);
-    if (!isNumber(size) || size < 2 || size > 19) {
+    if (isNumber(size) && size >= 2 && size <= 19) {
+      this.size = size;
+    } else {
       throw new TypeError(
         'size must be set to a positive integer between 2 and 19'
       );
     }
-    // check init*
+
+    this.initBlack = raw['init-black'] ? listOfCoordinates(raw['init-black']) : [];
+    this.initWhite = raw['init-white'] ? listOfCoordinates(raw['init-white']) : [];
   }
 
   render() {throw new Error('Not implemented')}
+}
+
+class StaticBoard extends Base {
 }
