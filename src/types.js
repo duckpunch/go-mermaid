@@ -1,5 +1,8 @@
-import godash from 'godash';
-import { isArray, isNumber } from 'lodash';
+import { Board, BLACK, WHITE, placeStones } from 'godash';
+import isArray from 'lodash/isArray';
+import isNumber from 'lodash/isNumber';
+
+import { create, renderBoard } from './render';
 
 const DEFAULT_SIZE = 19;
 
@@ -33,12 +36,34 @@ class Base {
     );
   }
 
-  render() {
+  get element() {
     throw new Error('Not implemented');
   }
 }
 
-class StaticBoard extends Base {
-  render() {
+export class StaticBoard extends Base {
+  get element() {
+    if (!this._element) {
+      this._created = create(this.board.size);
+      renderBoard(this._created.stones, this.board);
+      this._element = this._created.root;
+    }
+    return this._element;
   }
+}
+
+export const AUTO_RESPONSE = 'auto-response';
+export const FREEPLAY = 'freeplay';
+export const REPLAY = 'replay';
+export const STATIC = 'static';
+
+export function getDiagram(raw) {
+  const diagram = {
+    [STATIC]: StaticBoard,
+  }[raw.type];
+
+  if (diagram) {
+    return new diagram(raw);
+  }
+  throw new TypeError('Unsupported/missing type');
 }

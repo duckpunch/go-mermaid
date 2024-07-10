@@ -1,7 +1,8 @@
-import godash from 'godash';
-import yaml from 'js-yaml'
+//import { Board, Coordinate, placeStones } from 'godash';
+import yaml from 'js-yaml';
 
 import { create, renderBoard } from './render';
+import { getDiagram } from './types';
 
 const AUTO_RESPONSE = 'auto-response';
 const FREEPLAY = 'freeplay';
@@ -89,30 +90,30 @@ responses:
         comment: Yep
 `)
 
-window.process = process;
-window.create = create;
-window.s = document.getElementById('sandbox');
-window.board = function() {
-  return godash.placeStones(
-    godash.Board(),
-    [godash.Coordinate(4,4), godash.Coordinate(16, 4)],
-    godash.BLACK,
-  );
-};
-window.render = function() {
-  const {root, stones} = create(19);
-  renderBoard(
-    stones,
-    godash.placeStones(
-      godash.Board(),
-      [
-        godash.Coordinate(0, 0),
-        godash.Coordinate(18, 18),
-        godash.Coordinate(3, 3),
-        godash.Coordinate(15, 3),
-      ],
-      godash.BLACK,
-    ),
-  );
-  document.getElementById('sandbox').appendChild(root);
-};
+//window.process = process;
+//window.create = create;
+//window.s = document.getElementById('sandbox');
+//window.board = function() {
+  //return godash.placeStones(
+    //godash.Board(),
+    //[godash.Coordinate(4,4), godash.Coordinate(16, 4)],
+    //godash.BLACK,
+  //);
+//};
+//window.render = function() {
+  //const {root, stones} = create(19);
+  //renderBoard(
+    //stones,
+    //godash.placeStones(
+      //godash.Board(),
+      //[
+        //godash.Coordinate(0, 0),
+        //godash.Coordinate(18, 18),
+        //godash.Coordinate(3, 3),
+        //godash.Coordinate(15, 3),
+      //],
+      //godash.BLACK,
+    //),
+  //);
+  //document.getElementById('sandbox').appendChild(root);
+//};
