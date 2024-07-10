@@ -25,10 +25,20 @@ class Base {
 
     this.initBlack = raw['init-black'] ? listOfCoordinates(raw['init-black']) : [];
     this.initWhite = raw['init-white'] ? listOfCoordinates(raw['init-white']) : [];
+
+    this.board = godash.placeStones(
+      godash.placeStones(godash.Board(size), this.initBlack, godash.BLACK),
+      this.initWhite,
+      godash.WHITE,
+    );
   }
 
-  render() {throw new Error('Not implemented')}
+  render() {
+    throw new Error('Not implemented');
+  }
 }
 
 class StaticBoard extends Base {
+  render() {
+  }
 }
