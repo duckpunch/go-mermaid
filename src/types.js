@@ -1,4 +1,5 @@
-import { Board, BLACK, WHITE, placeStones } from 'godash';
+//import { Board, BLACK, WHITE, fromA1Coordinate, placeStones } from 'godash';
+import godash from 'godash';
 import isArray from 'lodash/isArray';
 import isNumber from 'lodash/isNumber';
 
@@ -44,7 +45,7 @@ class Base {
 export class StaticBoard extends Base {
   get element() {
     if (!this._element) {
-      this._created = create(this.board.size);
+      this._created = create(this.board.dimensions);
       renderBoard(this._created.stones, this.board);
       this._element = this._created.root;
     }
