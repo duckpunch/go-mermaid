@@ -49,6 +49,8 @@ export function renderBoard(stoneContainer, board) {
       cy: coordinate.y + 1,
       r: '0.45',
       fill: color,
+      stroke: 'black',
+      'stroke-width':  '0.3%',
     }));
   });
 }

@@ -2,10 +2,11 @@ import yaml from 'js-yaml';
 
 import { getDiagram } from './types';
 
-function process(container, rawString) {
-  const loaded = yaml.load(rawString);
+function process(dom) {
+  const loaded = yaml.load(dom.innerHTML);
   const diagram = getDiagram(loaded);
-  container.appendChild(diagram.element);
+  dom.innerHTML = '';
+  dom.appendChild(diagram.element);
 }
 
 window.sample = {}
@@ -47,3 +48,8 @@ responses:
 `;
 window.process = process;
 window.sb = document.getElementById('sandbox');
+window.yaml = yaml;
+
+for (const dom of document.getElementsByClassName('go-mermaid')) {
+  process(dom);
+}

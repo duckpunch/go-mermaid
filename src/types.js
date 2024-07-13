@@ -15,7 +15,7 @@ function listOfCoordinates(raw) {
   }
 }
 
-class Base {
+class Board {
   constructor(raw) {
     // TODO possibly funky parseInt results
     const size = parseInt(raw.size);
@@ -42,7 +42,18 @@ class Base {
   }
 }
 
-export class StaticBoard extends Base {
+export class StaticBoard extends Board {
+  get element() {
+    if (!this._element) {
+      this._created = create(this.board.dimensions);
+      renderBoard(this._created.stones, this.board);
+      this._element = this._created.root;
+    }
+    return this._element;
+  }
+}
+
+export class Freeplay extends Board {
   get element() {
     if (!this._element) {
       this._created = create(this.board.dimensions);
@@ -61,6 +72,7 @@ export const STATIC = 'static';
 export function getDiagram(raw) {
   const diagram = {
     [STATIC]: StaticBoard,
+    [FREEPLAY]: Freeplay,
   }[raw.type];
 
   if (diagram) {
