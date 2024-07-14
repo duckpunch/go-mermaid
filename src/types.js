@@ -59,6 +59,19 @@ export class Freeplay extends Board {
       this._created = create(this.board.dimensions);
       renderBoard(this._created.stones, this.board);
       this._element = this._created.root;
+
+      this._created.eventPlane.addEventListener('click', event => {
+        console.log('SUP DAWG');
+        console.log(event);
+        const pt = this._created.eventPlane.createSVGPoint();
+        pt.x = event.clientX;
+        pt.y = event.clientY;
+        const invScreenCTM = this._created.eventPlane.getScreenCTM().inverse();
+        const localCoords = pt.matrixTransform(
+          invScreenCTM
+        );
+        console.log(localCoords);
+      });
     }
     return this._element;
   }

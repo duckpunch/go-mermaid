@@ -30,7 +30,17 @@ export function create(size) {
   const annotations = svg('svg');
   root.appendChild(annotations);
 
-  return { root, board, stones, annotations };
+  const eventPlane = svg('svg');
+  eventPlane.appendChild(svg('rect', {
+    fill: 'rgb(0,0,0,0.001)',
+    x: 0,
+    y: 0,
+    width: size + 1,
+    height: size + 1,
+  }));
+  root.appendChild(eventPlane);
+
+  return { root, board, stones, annotations, eventPlane };
 }
 
 export function svg(name, attributes) {
