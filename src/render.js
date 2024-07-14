@@ -53,7 +53,6 @@ export function svg(name, attributes) {
 
 export function renderBoard(stoneContainer, board) {
   board.moves.forEach((color, coordinate) => {
-    console.log(coordinate.x, coordinate.y);
     stoneContainer.appendChild(svg('circle', {
       cx: coordinate.x + 1,
       cy: coordinate.y + 1,
