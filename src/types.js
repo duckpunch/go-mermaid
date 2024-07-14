@@ -53,6 +53,21 @@ export class StaticBoard extends Board {
   }
 }
 
+function toLocalPoint(mouseEvent, svgParent) {
+  const svgPoint = svgParent.createSVGPoint();
+  svgPoint.x = mouseEvent.clientX;
+  svgPoint.y = mouseEvent.clientY;
+
+  return svgPoint.matrixTransform(svgParent.getScreenCTM().inverse());
+}
+
+function toCoordinate(mouseEvent, svgParent) {
+  const svgPoint = toLocalPoint(mouseEvent, svgParent);
+  svgPoint.x = Math.floor(svgPoint.x + 0.5) - 1;
+  svgPoint.y = Math.floor(svgPoint.y + 0.5) - 1;
+  return godash.Coordinate(svgPoint.x, svgPoint.y);
+}
+
 export class Freeplay extends Board {
   get element() {
     if (!this._element) {
@@ -61,16 +76,7 @@ export class Freeplay extends Board {
       this._element = this._created.root;
 
       this._created.eventPlane.addEventListener('click', event => {
-        console.log('SUP DAWG');
-        console.log(event);
-        const pt = this._created.eventPlane.createSVGPoint();
-        pt.x = event.clientX;
-        pt.y = event.clientY;
-        const invScreenCTM = this._created.eventPlane.getScreenCTM().inverse();
-        const localCoords = pt.matrixTransform(
-          invScreenCTM
-        );
-        console.log(localCoords);
+        console.log(toCoordinate(event, this._created.eventPlane).toString());
       });
     }
     return this._element;
