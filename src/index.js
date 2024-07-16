@@ -10,18 +10,6 @@ function process(dom) {
 }
 
 window.sample = {}
-window.sample.staticBoard = `
-type: static
-size: 19
-init-black: [A1, A2, A3]
-init-white: [B1, B2, B3]
-`;
-window.sample.freeplay = `
-type: freeplay
-size: 19
-init-black: [A1, A2, A3]
-init-white: [B1, B2, B3]
-`;
 window.sample.replay = `
 type: replay
 size: 19

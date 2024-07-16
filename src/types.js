@@ -1,9 +1,8 @@
-//import { Board, BLACK, WHITE, fromA1Coordinate, placeStones } from 'godash';
 import godash from 'godash';
 import isArray from 'lodash/isArray';
 import isNumber from 'lodash/isNumber';
 
-import { create, renderBoard } from './render';
+import { clearChildren, create, emptyOnBoard, renderBoard, stoneSvg } from './render';
 
 const DEFAULT_SIZE = 19;
 
@@ -69,6 +68,12 @@ function toCoordinate(mouseEvent, svgParent) {
 }
 
 export class Freeplay extends Board {
+  constructor(raw) {
+    super(raw);
+    this.nextPlayer = godash.BLACK;
+    this.lastPlay = null;
+  }
+
   get element() {
     if (!this._element) {
       this._created = create(this.board.dimensions);
@@ -76,7 +81,35 @@ export class Freeplay extends Board {
       this._element = this._created.root;
 
       this._created.eventPlane.addEventListener('click', event => {
-        console.log(toCoordinate(event, this._created.eventPlane).toString());
+        const coordinate = toCoordinate(event, this._created.eventPlane);
+        try {
+          const move = godash.Move(coordinate, this.nextPlayer);
+          const illegalPrevious = godash.followupKo(this.board, move);
+          if (illegalPrevious && illegalPrevious.equals(this.lastPlay)) {
+            throw new Error('Illegal move (ko)');
+          }
+          this.board = godash.addMove(this.board, move);
+          renderBoard(this._created.stones, this.board);
+          this.nextPlayer = godash.oppositeColor(this.nextPlayer);
+          this.lastPlay = coordinate;
+        } catch (e) {
+          // Illegal move - log for funsies
+          console.log(e);
+        }
+      });
+      this._created.eventPlane.addEventListener('mousemove', event => {
+        const coordinate = toCoordinate(event, this._created.eventPlane);
+        clearChildren(this._created.hoverPlane);
+        if (emptyOnBoard(coordinate, this.board)) {
+          this._created.hoverPlane.appendChild(stoneSvg(
+            coordinate,
+            this.nextPlayer,
+            {
+              'fill-opacity': 0.5,
+              'stroke-opacity': 0.2,
+            },
+          ));
+        }
       });
     }
     return this._element;

@@ -30,6 +30,9 @@ export function create(size) {
   const annotations = svg('svg');
   root.appendChild(annotations);
 
+  const hoverPlane = svg('svg');
+  root.appendChild(hoverPlane);
+
   const eventPlane = svg('svg');
   eventPlane.appendChild(svg('rect', {
     fill: 'rgb(0,0,0,0.001)',
@@ -40,7 +43,14 @@ export function create(size) {
   }));
   root.appendChild(eventPlane);
 
-  return { root, board, stones, annotations, eventPlane };
+  return {
+    annotations,
+    board,
+    eventPlane,
+    hoverPlane,
+    root,
+    stones,
+  };
 }
 
 export function svg(name, attributes) {
@@ -51,15 +61,37 @@ export function svg(name, attributes) {
   return element;
 }
 
-export function renderBoard(stoneContainer, board) {
-  board.moves.forEach((color, coordinate) => {
-    stoneContainer.appendChild(svg('circle', {
+export function emptyOnBoard(coordinate, board) {
+  const notOnBoard = !board.moves.has(coordinate);
+  return notOnBoard
+    && coordinate.x < board.dimensions
+    && coordinate.x >= 0
+    && coordinate.y < board.dimensions
+    && coordinate.y >= 0;
+}
+
+export function stoneSvg(coordinate, color, options) {
+  return svg(
+    'circle',
+    {
       cx: coordinate.x + 1,
       cy: coordinate.y + 1,
       r: '0.45',
       fill: color,
       stroke: 'black',
       'stroke-width':  '0.3%',
-    }));
-  });
+      ...options,
+    },
+  )
+}
+
+export function renderBoard(stoneContainer, board) {
+  clearChildren(stoneContainer);
+  board.moves.forEach((color, coordinate) => stoneContainer.appendChild(
+    stoneSvg(coordinate, color)
+  ));
+}
+
+export function clearChildren(node) {
+  while (node.firstChild) node.removeChild(node.lastChild);
 }
