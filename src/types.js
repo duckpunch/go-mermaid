@@ -116,6 +116,17 @@ export class Freeplay extends Board {
   }
 }
 
+export class Replay extends Board {
+  get element() {
+    if (!this._element) {
+      this._created = create(this.board.dimensions);
+      renderBoard(this._created.stones, this.board);
+      this._element = this._created.root;
+    }
+    return this._element;
+  }
+}
+
 export const AUTO_RESPONSE = 'auto-response';
 export const FREEPLAY = 'freeplay';
 export const REPLAY = 'replay';
@@ -125,6 +136,7 @@ export function getDiagram(raw) {
   const diagram = {
     [STATIC]: StaticBoard,
     [FREEPLAY]: Freeplay,
+    [REPLAY]: Replay,
   }[raw.type];
 
   if (diagram) {

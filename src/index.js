@@ -10,17 +10,6 @@ function process(dom) {
 }
 
 window.sample = {}
-window.sample.replay = `
-type: replay
-size: 19
-init-black: [A1, A2, A3]
-init-white: [B1, B2, B3]
-sequence:
-  - move: c1
-    comment: whoa
-  - c2
-  - c3
-`;
 window.sample.autoResponse = `
 type: auto-response
 size: 19
