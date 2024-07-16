@@ -2,7 +2,14 @@ import godash from 'godash';
 import isArray from 'lodash/isArray';
 import isNumber from 'lodash/isNumber';
 
-import { clearChildren, create, emptyOnBoard, renderBoard, stoneSvg } from './render';
+import {
+  clearChildren,
+  create,
+  emptyOnBoard,
+  renderBoard,
+  stoneSvg,
+  wrapBoard,
+} from './render';
 
 const DEFAULT_SIZE = 19;
 
@@ -72,13 +79,24 @@ export class Freeplay extends Board {
     super(raw);
     this.nextPlayer = godash.BLACK;
     this.lastPlay = null;
+    this._initBoard = this.board;
   }
 
   get element() {
     if (!this._element) {
       this._created = create(this.board.dimensions);
       renderBoard(this._created.stones, this.board);
-      this._element = this._created.root;
+      this._wrapper = wrapBoard(this._created.root);
+      this._element = this._wrapper.root;
+
+      const resetButton = document.createElement('span');
+      resetButton.textContent = 'reset';
+      this._wrapper.controls.appendChild(resetButton);
+
+      resetButton.addEventListener('click', event => {
+        this.board = this._initBoard;
+        renderBoard(this._created.stones, this.board);
+      });
 
       this._created.eventPlane.addEventListener('click', event => {
         const coordinate = toCoordinate(event, this._created.eventPlane);
@@ -121,7 +139,8 @@ export class Replay extends Board {
     if (!this._element) {
       this._created = create(this.board.dimensions);
       renderBoard(this._created.stones, this.board);
-      this._element = this._created.root;
+      this._wrapper = wrapBoard(this._created.root);
+      this._element = this._wrapper.root;
     }
     return this._element;
   }

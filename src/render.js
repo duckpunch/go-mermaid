@@ -95,3 +95,18 @@ export function renderBoard(stoneContainer, board) {
 export function clearChildren(node) {
   while (node.firstChild) node.removeChild(node.lastChild);
 }
+
+export function wrapBoard(boardRoot) {
+  const root = document.createElement('div');
+  const controls = document.createElement('div');
+  controls.className = 'go-mermaid-controls';
+  root.appendChild(controls);
+
+  root.appendChild(boardRoot);
+
+  const comments = document.createElement('div');
+  comments.className = 'go-mermaid-comments';
+  root.appendChild(comments);
+
+  return {root, controls, comments};
+}
