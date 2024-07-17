@@ -218,6 +218,17 @@ export class Replay extends Board {
   }
 }
 
+export class AutoResponse extends Board {
+  get element() {
+    if (!this._element) {
+      this._created = create(this.board.dimensions);
+      renderBoard(this._created.stones, this.board);
+      this._element = this._created.root;
+    }
+    return this._element;
+  }
+}
+
 export const AUTO_RESPONSE = 'auto-response';
 export const FREEPLAY = 'freeplay';
 export const REPLAY = 'replay';
@@ -228,6 +239,7 @@ export function getDiagram(raw) {
     [STATIC]: StaticBoard,
     [FREEPLAY]: Freeplay,
     [REPLAY]: Replay,
+    [AUTO_RESPONSE]: AutoResponse,
   }[raw.type];
 
   if (diagram) {

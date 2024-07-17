@@ -5,12 +5,31 @@
   width: 500px;
 }
 </style>
-  <!--<div class="go-mermaid">-->
-    <!--type: freeplay-->
-    <!--size: 19-->
-    <!--init-black: [A1, A2, A3]-->
-    <!--init-white: [B1, B2, B3]-->
-  <!--</div>-->
+  <div class="go-mermaid">
+    type: auto-response
+    size: 19
+    init-black: [A1, A2, A3]
+    init-white: [B1, B2, B3]
+    responses:
+      c1:
+        comment: Something interesting
+        auto: c2
+        responses:
+          c3:
+            comment: Yep
+  </div>
+  <div class="go-mermaid">
+    type: freeplay
+    size: 19
+    init-black: [A1, A2, A3]
+    init-white: [B1, B2, B3]
+  </div>
+  <div class="go-mermaid">
+    type: static
+    size: 19
+    init-black: [A1, A2, A3]
+    init-white: [B1, B2, B3]
+  </div>
   <div class="go-mermaid">
     type: replay
     size: 19
