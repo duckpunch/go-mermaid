@@ -1,6 +1,7 @@
 import godash from 'godash';
 import isArray from 'lodash/isArray';
 import isNumber from 'lodash/isNumber';
+import isString from 'lodash/isString';
 
 import {
   clearChildren,
@@ -134,13 +135,84 @@ export class Freeplay extends Board {
   }
 }
 
+function toReplayNode(node) {
+  if (isString(node)) {
+    return {
+      move: godash.fromA1Coordinate(node),
+      comment: '',
+    };
+  } else {
+    return {
+      move: godash.fromA1Coordinate(node.move),
+      comment: node.comment,
+    };
+  }
+}
+
 export class Replay extends Board {
+  constructor(raw) {
+    super(raw);
+    if (isArray(raw.sequence) && raw.sequence.length > 0) {
+      this.sequence = raw.sequence.map(toReplayNode);
+    } else {
+      throw new TypeError('sequence must be provided and a non-empty array');
+    }
+    this.sequenceIndex = -1;
+    this.currentNode = null;
+    this.startColor = raw['start-color'] || godash.BLACK;
+  }
+
   get element() {
     if (!this._element) {
       this._created = create(this.board.dimensions);
       renderBoard(this._created.stones, this.board);
       this._wrapper = wrapBoard(this._created.root);
       this._element = this._wrapper.root;
+
+      let board = this.board;
+      let color = this.startColor;
+      this._boards = this.sequence.map(node => {
+        board = godash.addMove(board, godash.Move(node.move, color));
+        color = godash.oppositeColor(color);
+        return board;
+      });
+
+      const prevButton = document.createElement('span');
+      prevButton.textContent = 'prev';
+      const nextButton = document.createElement('span');
+      nextButton.textContent = 'next';
+      this._wrapper.controls.appendChild(prevButton);
+      this._wrapper.controls.appendChild(nextButton);
+
+      this.currentBoard = board;
+
+      prevButton.addEventListener('click', event => {
+        this.sequenceIndex = this.sequenceIndex === -1 ? -1 : this.sequenceIndex - 1;
+
+        if (this.sequenceIndex >= 0) {
+          this.currentNode = this.sequence[this.sequenceIndex];
+          this.currentBoard = this._boards[this.sequenceIndex];
+        } else {
+          this.currentNode = null;
+          this.currentBoard = this.board;
+        }
+
+        renderBoard(this._created.stones, this.currentBoard);
+        this._comments.textContent = this.currentNode ? this.currentNode.comment : '';
+      });
+
+      nextButton.addEventListener('click', event => {
+        this.sequenceIndex = this.sequenceIndex >= this.sequence.length - 1 ? this.sequenceIndex : this.sequenceIndex + 1;
+
+        this.currentNode = this.sequence[this.sequenceIndex];
+        this.currentBoard = this._boards[this.sequenceIndex];
+
+        renderBoard(this._created.stones, this.currentBoard);
+        this._comments.textContent = this.currentNode.comment;
+      });
+
+      this._comments = document.createElement('span');
+      this._wrapper.comments.appendChild(this._comments);
     }
     return this._element;
   }
